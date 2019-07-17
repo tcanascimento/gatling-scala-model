@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test
+  namespace: your-namespace-here
+spec:
+  backoffLimit: 1
+  parallelism: 10
+  completions: 10
+  template:
+    metadata:
+      labels:
+        name: label-here
+    spec:
+      containers:
+        - image: name-of-the-docker-image:version
+          name: load-test
+          command: []
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2500Mi
+            requests:
+              cpu: 500m
+              memory: 2500Mi
+          envFrom:
+            - configMapRef:
+                name: perf-test-config
+      restartPolicy: Never
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: perf-test-config
+  namespace: perf-test
+data:
+  YOUR_ENV_VAR: value # for secrets or env variables for external services
